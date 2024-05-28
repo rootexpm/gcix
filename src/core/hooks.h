@@ -12,4 +12,8 @@ namespace hooks
 	using cryptQueryFn = unsigned __int8(__cdecl*)(void*, int) noexcept;
 	inline cryptQueryFn cryptQueryOg = nullptr;
 	unsigned __int8 __cdecl cryptQueryHook(void* a1, int a2) noexcept;
+
+	using getMapNameFn = char* (__thiscall*)(void*, unsigned __int16) noexcept;
+	inline getMapNameFn getMapNameOg = nullptr;
+	const char* __fastcall getMapNameHook(void* thisPtr, void* Unknown, unsigned __int16 a2) noexcept;
 };

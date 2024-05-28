@@ -34,6 +34,7 @@ void console::Print(const char* format, ...) noexcept
 
 	printf_s("[console] ");
 	vprintf_s(format, args);
+	printf_s("\n");
 
 	va_end(args);
 }
