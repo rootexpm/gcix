@@ -2,6 +2,5 @@
 
 void patches::Setup() noexcept
 {
-	//patchWindowTitle();
 	return;
 }

@@ -98,5 +98,14 @@
     <ClInclude Include="src\util\Hooking.Patterns.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\monolith\StartGameRequest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\monolith\ltbasetypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\monolith\ltinteger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -22,8 +22,14 @@ void hooks::Setup() noexcept
 
 	MH_CreateHook(
 		reinterpret_cast<void*>(0x440FCC),
-		getMapNameHook,
-		reinterpret_cast<void**>(&getMapNameOg)
+		getFileNameHook,
+		reinterpret_cast<void**>(&getFileNameOg) // client_file_mgr->GetFilename
+	);
+
+	MH_CreateHook(
+		reinterpret_cast<void*>(0x40C465),
+		startShellHook,
+		reinterpret_cast<void**>(&startShellOg) // StartShell
 	);
 
 	MH_EnableHook(MH_ALL_HOOKS);
@@ -48,7 +54,16 @@ unsigned __int8 __cdecl hooks::cryptQueryHook(void* a1, int a2) noexcept
 	return true;
 }
 
-const char* __fastcall hooks::getMapNameHook(void* thisPtr, void *Unknown, unsigned __int16 a2) noexcept
+const char* __fastcall hooks::getFileNameHook(void* thisPtr, void *Unknown, unsigned __int16 a2) noexcept
 {
-	return "worlds\\retail01\\gothampower.wld";
+	const char* result = getFileNameOg(thisPtr, a2);
+
+	console::Print("File read: %s", result);
+	return result;
+}
+
+uint32 __fastcall hooks::startShellHook(void* thisPtr, void* Unknown, StartGameRequest* request) noexcept
+{
+	int result = startShellOg(thisPtr, request);
+	return result;
 }

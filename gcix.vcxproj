@@ -163,6 +163,9 @@
     <ClInclude Include="ext\minhook\trampoline.h" />
     <ClInclude Include="src\core\globals.h" />
     <ClInclude Include="src\core\hooks.h" />
+    <ClInclude Include="src\monolith\ltbasetypes.h" />
+    <ClInclude Include="src\monolith\ltinteger.h" />
+    <ClInclude Include="src\monolith\StartGameRequest.h" />
     <ClInclude Include="src\patches\instance.h" />
     <ClInclude Include="src\patches\patches.h" />
     <ClInclude Include="src\util\console.h" />
