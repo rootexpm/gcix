@@ -61,6 +61,9 @@ Temporary Items
 # Build results
 build
 
+#vcxproj
+
+
 # Visual Studio 2015 cache/options directory
 .vs/
 

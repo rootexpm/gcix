@@ -146,7 +146,11 @@
     <ClCompile Include="ext\minhook\trampoline.c" />
     <ClCompile Include="src\core\hooks.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\patches\debugprint.cpp" />
+    <ClCompile Include="src\patches\party.cpp" />
     <ClCompile Include="src\patches\patches.cpp" />
+    <ClCompile Include="src\patches\steaminit.cpp" />
+    <ClCompile Include="src\patches\window.cpp" />
     <ClCompile Include="src\proxy.cpp" />
     <ClCompile Include="src\util\console.cpp" />
     <ClCompile Include="src\util\Hooking.Patterns.cpp" />
@@ -166,11 +170,13 @@
     <ClInclude Include="src\monolith\ltbasetypes.h" />
     <ClInclude Include="src\monolith\ltinteger.h" />
     <ClInclude Include="src\monolith\StartGameRequest.h" />
-    <ClInclude Include="src\patches\instance.h" />
     <ClInclude Include="src\patches\patches.h" />
     <ClInclude Include="src\util\console.h" />
     <ClInclude Include="src\util\Hooking.Patterns.h" />
     <ClInclude Include="src\util\mem.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

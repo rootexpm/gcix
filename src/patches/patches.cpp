@@ -2,5 +2,10 @@
 
 void patches::Setup() noexcept
 {
-	return;
+	patchWindowTitle();
+	patchNullSub();
+	patchSteamInit();
+	//patchMaxPartySize();
+
+	console::Print("Patches applied...");
 }

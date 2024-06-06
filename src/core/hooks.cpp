@@ -20,11 +20,11 @@ void hooks::Setup() noexcept
 		reinterpret_cast<void**>(&cryptQueryOg)
 	);
 
-	MH_CreateHook(
-		reinterpret_cast<void*>(0x440FCC),
-		getFileNameHook,
-		reinterpret_cast<void**>(&getFileNameOg) // client_file_mgr->GetFilename
-	);
+	//MH_CreateHook(
+	//	reinterpret_cast<void*>(0x440FCC),
+	//	getFileNameHook,
+	//	reinterpret_cast<void**>(&getFileNameOg) // client_file_mgr->GetFilename
+	//);
 
 	MH_CreateHook(
 		reinterpret_cast<void*>(0x40C465),
@@ -32,7 +32,39 @@ void hooks::Setup() noexcept
 		reinterpret_cast<void**>(&startShellOg) // StartShell
 	);
 
+	//MH_CreateHook(
+	//	reinterpret_cast<void*>(0x418833),
+	//	printFileAccessHook,
+	//	reinterpret_cast<void**>(&printFileAccessOg) // PrintFileAccess
+	//);
+
+	//MH_CreateHook(
+	//	reinterpret_cast<void*>(0x41A378),
+	//	readAssetHook,
+	//	reinterpret_cast<void**>(&readAssetOg) // ReadAsset
+	//);
+
+	MH_CreateHook(
+		reinterpret_cast<void*>(0x498007),
+		getMaxPartySizeHook,
+		reinterpret_cast<void**>(&getMaxPartySizeOg) // GetMaxPartySize
+	);
+
+	//MH_CreateHook(
+	//	reinterpret_cast<void*>(0x668A90),
+	//	getGameSettingHook,
+	//	reinterpret_cast<void**>(&getGameSettingOg) // getaGameSetting
+	//);
+
+	//MH_CreateHook(
+	//	reinterpret_cast<void*>(0x60922F),
+	//	dlcEnableHook,
+	//	reinterpret_cast<void**>(&dlcEnableOg) // dlcEnable
+	//);
+
 	MH_EnableHook(MH_ALL_HOOKS);
+
+	console::Print("Hooks applied...");
 }
 
 void hooks::Destroy() noexcept
@@ -58,12 +90,49 @@ const char* __fastcall hooks::getFileNameHook(void* thisPtr, void *Unknown, unsi
 {
 	const char* result = getFileNameOg(thisPtr, a2);
 
-	console::Print("File read: %s", result);
+	console::Print("File get name: %d (%s)",a2, result);
 	return result;
 }
 
 uint32 __fastcall hooks::startShellHook(void* thisPtr, void* Unknown, StartGameRequest* request) noexcept
 {
 	int result = startShellOg(thisPtr, request);
+	return result;
+}
+
+void __cdecl hooks::printFileAccessHook(const char* a1, const char* a2) noexcept
+{
+	console::Print("File Access: %s: %s", a1, a2);
+}
+
+int __fastcall hooks::readAssetHook(void* thisPtr, void* Unknown, const char* a2, int a3, int a4) noexcept
+{
+	int result = readAssetOg(thisPtr, a2, a3, a4);
+	console::Print("ReadAsset: %s", a2);
+	return result;
+}
+
+unsigned int hooks::getMaxPartySizeHook() noexcept
+{
+	unsigned int result = getMaxPartySizeOg();
+	console::Print("Max party size: %d", result);
+	return result;
+}
+
+int __fastcall hooks::getGameSettingHook(void* thisPtr, void* Unknown, int a2) noexcept
+{
+	int result = getGameSettingOg(thisPtr, a2);
+	
+	if (GetAsyncKeyState(VK_F1) & 1)
+	{
+		console::Print("Game setting: %d", result);
+	}
+
+	return result;
+}
+
+int __fastcall hooks::dlcEnableHook(void* thisPtr, void* Unknown) noexcept
+{
+	int result = dlcEnableOg(thisPtr);
 	return result;
 }
