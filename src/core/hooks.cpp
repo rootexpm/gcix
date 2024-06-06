@@ -1,6 +1,6 @@
 #include "hooks.h"
 
-#include "../../ext/minhook/MinHook.h"
+#include <MinHook.h>
 #include "../util/mem.h"
 #include "../util/console.h"
 

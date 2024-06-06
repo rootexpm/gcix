@@ -1,17 +1,21 @@
 workspace "gcix"
     configurations { "Release" }
     architecture "x86"
-    location "build"
+    location "."
 
-project "d3d9"
+project "gcix"
     kind "SharedLib"
     language "C++"
-    targetdir "bin/%{cfg.buildcfg}"
+    cppdialect "C++20"
+    targetdir "build/"
     targetname "d3d9"
+    objdir "build/intermediates/"
+
     files { "src/**.h", "src/**.cpp" }
-    
-    includedirs { "ext/minhook/include" }
-    
+    files { "ext/minhook/**.h", "ext/minhook/**.c" }
+
+    includedirs { "ext/minhook" }
+
     filter "configurations:Release"
         defines { "NDEBUG" }
         optimize "On"
@@ -21,11 +25,16 @@ project "d3d9"
 newoption {
     trigger = "postbuildcopy",
     value = "path",
-    description = "Optional parameter for post build operation to copy the dll to a specific path"
+    description = "Optional parameter for post build operation to copy the DLL to a specific path"
 }
 
 if _OPTIONS["postbuildcopy"] then
+    local saneCopyToPath = _OPTIONS["postbuildcopy"]:gsub("\\", "\\\\")
+
     postbuildcommands {
-        "{COPY} %{cfg.targetdir}/d3d9.dll " .. _OPTIONS["postbuildcopy"]
+        -- Ensure the target directory exists
+        "{MKDIR} " .. saneCopyToPath,
+        -- Copy the DLL file
+        "{COPY} %{cfg.buildtarget.abspath} " .. saneCopyToPath
     }
 end
