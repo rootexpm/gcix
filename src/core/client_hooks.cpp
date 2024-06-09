@@ -3,12 +3,16 @@
 #include "../util/console.h"
 #include "../util/mem.h"
 
+uintptr_t lglobalAddress = 0;
+
 void client_hooks::Setup(uintptr_t globalAddress) noexcept
 {
 	console::Print("Initializing client hooks: %p", globalAddress);
 	
+	lglobalAddress = globalAddress;
+
 	MH_CreateHook(
-		reinterpret_cast<void*>(0x7A73C030),
+		reinterpret_cast<void*>(lglobalAddress + 0x13c030),
 		setGameSettingsHook,
 		reinterpret_cast<void**>(&setGameSettingsOg)
 	);
@@ -20,12 +24,13 @@ void client_hooks::Setup(uintptr_t globalAddress) noexcept
 
 int __stdcall client_hooks::setGameSettingsHook(int a1) noexcept
 {
+	console::Print("Setting min players to 0");
 
 	int result = setGameSettingsOg(a1);
 
 	int MinRankedMatchPlayers = 0; 
-	void* address = reinterpret_cast<void*>(0x7AE13C1C); // address of MinRankedMatchPlayers @VZP
+	void* address = reinterpret_cast<void*>(lglobalAddress + 0x813c1c); // address of MinRankedMatchPlayers @VZP
 	mem::UpdateMemoryAddress(address, &MinRankedMatchPlayers, sizeof(MinRankedMatchPlayers));
-
+	
 	return result;
 }
