@@ -6,12 +6,6 @@
 void client_hooks::Setup(uintptr_t globalAddress) noexcept
 {
 	console::Print("Initializing client hooks: %p", globalAddress);
-
-	//MH_CreateHook(
-	//	reinterpret_cast<void*>(0x7AB95F90),
-	//	getMinRankedPlayersHook,
-	//	reinterpret_cast<void**>(&getMinRankedPlayersOg)
-	//);
 	
 	MH_CreateHook(
 		reinterpret_cast<void*>(0x7A73C030),
@@ -22,13 +16,6 @@ void client_hooks::Setup(uintptr_t globalAddress) noexcept
 	MH_EnableHook(MH_ALL_HOOKS);
 
 	console::Print("Client hooks initialized");
-}
-
-int client_hooks::getMinRankedPlayersHook() noexcept
-{
-	int result = getMinRankedPlayersOg();
-	console::Print("getMinRankedPlayersHook: %d", result);
-	return result;
 }
 
 int __stdcall client_hooks::setGameSettingsHook(int a1) noexcept
