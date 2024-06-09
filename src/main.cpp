@@ -2,7 +2,6 @@
 #include <Windows.h>
 #include <thread>
 
-#include "core/globals.h"
 #include "core/hooks.h"
 #include "util/console.h"
 #include "patches/patches.h"

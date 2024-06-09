@@ -3,9 +3,9 @@
 void patches::Setup() noexcept
 {
 	patchWindowTitle();
-	patchNullSub();
-	patchSteamInit();
-	//patchMaxPartySize();
+	//patchNullSub();
+	patchDlc();
+	patchMaxPartySize();
 
 	console::Print("Patches applied...");
 }

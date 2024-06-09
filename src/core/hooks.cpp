@@ -3,6 +3,18 @@
 #include <MinHook.h>
 #include "../util/mem.h"
 #include "../util/console.h"
+#include "../core/globals.h"
+#include "../util/util.h"
+
+#include "client_hooks.h"
+
+DWORD WINAPI waitForDllAndHook(LPVOID lpParam)
+{
+	util::waitForDll("GameClient.dll");
+	uintptr_t base = reinterpret_cast<uintptr_t>(GetModuleHandle("GameClient.dll"));
+	client_hooks::Setup(base);
+	return 0;
+}
 
 void hooks::Setup() noexcept
 {
@@ -61,6 +73,8 @@ void hooks::Setup() noexcept
 	//	dlcEnableHook,
 	//	reinterpret_cast<void**>(&dlcEnableOg) // dlcEnable
 	//);
+	
+	CreateThread(NULL, 0, waitForDllAndHook, NULL, 0, NULL);
 
 	MH_EnableHook(MH_ALL_HOOKS);
 
@@ -82,7 +96,7 @@ char __cdecl hooks::verifySignatureHook(const wchar_t* a1, int a2) noexcept
 
 unsigned __int8 __cdecl hooks::cryptQueryHook(void* a1, int a2) noexcept
 {
-	console::Print("CryptQuery being called, bypassing...");
+	console::Print("VerifyCertificate being called, bypassing...");
 	return true;
 }
 
@@ -122,12 +136,6 @@ unsigned int hooks::getMaxPartySizeHook() noexcept
 int __fastcall hooks::getGameSettingHook(void* thisPtr, void* Unknown, int a2) noexcept
 {
 	int result = getGameSettingOg(thisPtr, a2);
-	
-	if (GetAsyncKeyState(VK_F1) & 1)
-	{
-		console::Print("Game setting: %d", result);
-	}
-
 	return result;
 }
 

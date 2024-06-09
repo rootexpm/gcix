@@ -15,7 +15,7 @@ void console::Setup() noexcept
 	freopen_s(reinterpret_cast<FILE**>(stderr), "CONOUT$", "w", stderr);
 
 	char title[256];
-	sprintf_s(title, sizeof(title), "console - %s %s", __DATE__, __TIME__);
+	sprintf_s(title, sizeof(title), "gcix - %s %s", __DATE__, __TIME__);
 	SetConsoleTitleA(title);
 }
 
@@ -32,7 +32,7 @@ void console::Print(const char* format, ...) noexcept
 	va_list args;
 	va_start(args, format);
 
-	printf_s("[console] ");
+	printf_s("[gcix] ");
 	vprintf_s(format, args);
 	printf_s("\n");
 

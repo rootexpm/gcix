@@ -1,6 +1,5 @@
 #pragma once
 
-#include "windows.h"
 #include "../util/Hooking.Patterns.h"
 #include "../util/mem.h"
 #include "../util/console.h"
@@ -12,4 +11,5 @@ namespace patches
 	void patchMaxPartySize() noexcept;
 	void patchNullSub() noexcept;
 	void patchSteamInit() noexcept;
+	void patchDlc() noexcept;
 }

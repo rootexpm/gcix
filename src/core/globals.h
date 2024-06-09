@@ -3,5 +3,5 @@
 
 namespace globals
 {
-	const auto client = reinterpret_cast<std::uintptr_t>(GetModuleHandle("GameClient.dll"));
+	uintptr_t client = 0;
 }
