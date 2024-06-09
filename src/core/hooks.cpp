@@ -62,6 +62,12 @@ void hooks::Setup() noexcept
 		reinterpret_cast<void**>(&getMaxPartySizeOg) // GetMaxPartySize
 	);
 
+	MH_CreateHook(
+		reinterpret_cast<void*>(0x4760FF),
+		console::DebugPrint,
+		NULL
+	);
+
 	//MH_CreateHook(
 	//	reinterpret_cast<void*>(0x668A90),
 	//	getGameSettingHook,

@@ -34,10 +34,6 @@ namespace hooks
 	inline getMaxPartySizeFn getMaxPartySizeOg = nullptr;
 	unsigned int getMaxPartySizeHook() noexcept;
 
-	using debugPrintFn = void(*)(const char*, ...) noexcept;
-	inline debugPrintFn debugPrintOg = nullptr;
-	void debugPrintHook(const char* a1, ...) noexcept;
-
 	using getGameSetting = int(__thiscall*)(void*, int) noexcept;
 	inline getGameSetting getGameSettingOg = nullptr;
 	int __fastcall getGameSettingHook(void* thisPtr, void* Unknown, int a2) noexcept;
