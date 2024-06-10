@@ -38,11 +38,11 @@ void hooks::Setup() noexcept
 	//	reinterpret_cast<void**>(&getFileNameOg) // client_file_mgr->GetFilename
 	//);
 
-	MH_CreateHook(
-		reinterpret_cast<void*>(0x40C465),
-		startShellHook,
-		reinterpret_cast<void**>(&startShellOg) // StartShell
-	);
+	//MH_CreateHook(
+	//	reinterpret_cast<void*>(0x40C465),
+	//	startShellHook,
+	//	reinterpret_cast<void**>(&startShellOg) // StartShell
+	//);
 
 	//MH_CreateHook(
 	//	reinterpret_cast<void*>(0x418833),
@@ -56,11 +56,11 @@ void hooks::Setup() noexcept
 	//	reinterpret_cast<void**>(&readAssetOg) // ReadAsset
 	//);
 
-	MH_CreateHook(
-		reinterpret_cast<void*>(0x498007),
-		getMaxPartySizeHook,
-		reinterpret_cast<void**>(&getMaxPartySizeOg) // GetMaxPartySize
-	);
+	//MH_CreateHook(
+	//	reinterpret_cast<void*>(0x498007),
+	//	getMaxPartySizeHook,
+	//	reinterpret_cast<void**>(&getMaxPartySizeOg) // GetMaxPartySize
+	//);
 
 	MH_CreateHook(
 		reinterpret_cast<void*>(0x4760FF),
@@ -80,7 +80,25 @@ void hooks::Setup() noexcept
 	//	reinterpret_cast<void**>(&dlcEnableOg) // dlcEnable
 	//);
 	
+	//MH_CreateHook(
+	//	reinterpret_cast<void*>(0x48EA47),
+	//	getGameSettingHook,
+	//	reinterpret_cast<void**>(&getGameSettingOg) // getaGameSetting
+	//);
+
 	CreateThread(NULL, 0, waitForDllAndHook, NULL, 0, NULL);
+
+	MH_CreateHook(
+		reinterpret_cast<void*>(0x48EA47),
+		startSessionHook,
+		reinterpret_cast<void**>(&startSessionOg)
+	);
+
+	MH_CreateHook(
+		reinterpret_cast<void*>(0x480298),
+		initTclHook,
+		reinterpret_cast<void**>(&initTclOg)
+	);
 
 	MH_EnableHook(MH_ALL_HOOKS);
 
@@ -131,7 +149,7 @@ int __fastcall hooks::readAssetHook(void* thisPtr, void* Unknown, const char* a2
 	console::Print("ReadAsset: %s", a2);
 	return result;
 }
-
+void* gamePointer = nullptr;
 unsigned int hooks::getMaxPartySizeHook() noexcept
 {
 	unsigned int result = getMaxPartySizeOg();
@@ -149,4 +167,42 @@ int __fastcall hooks::dlcEnableHook(void* thisPtr, void* Unknown) noexcept
 {
 	int result = dlcEnableOg(thisPtr);
 	return result;
+}
+
+int __fastcall hooks::startSessionHook(void* thisPtr, void* Unknown) noexcept
+{
+	gamePointer = thisPtr;
+	console::Print("Starting session... %p", gamePointer);
+	int result = startSessionOg(thisPtr);
+	return result;
+}
+
+void __fastcall hooks::initTclHook(char* thisPtr, void* Unknown) noexcept
+{
+	// Calculate baseUrl pointer
+	char* baseUrl = thisPtr + 12;
+
+	// Define the new URL
+	const char* newBaseUrl = "http://127.0.0.1:8080/CLS";
+
+	// Check if the buffer is large enough
+	size_t newBaseUrlLength = std::strlen(newBaseUrl);
+
+	if (newBaseUrlLength < 256)
+	{
+		// Copy the new URL into the baseUrl
+		std::strcpy(baseUrl, newBaseUrl);
+	}
+	else
+	{
+		// Handle the case where the buffer is too small, if necessary
+		console::Print("Buffer too small to set new URL");
+		return;
+	}
+
+	// Print the modified baseUrl
+	console::Print("Modified Base URL: %s", baseUrl);
+
+	// Call the original function
+	initTclOg(thisPtr);
 }

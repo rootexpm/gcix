@@ -41,4 +41,12 @@ namespace hooks
 	using dlcEnableFn = int(__thiscall*)(void*) noexcept;
 	inline dlcEnableFn dlcEnableOg = nullptr;
 	int __fastcall dlcEnableHook(void* thisPtr, void* Unknown) noexcept;
+
+	using startSessionFn = int(__thiscall*)(void*) noexcept;
+	inline startSessionFn startSessionOg = nullptr;
+	int __fastcall startSessionHook(void* thisPtr, void* Unknown) noexcept;
+
+	using initTclFn = void(__thiscall*)(char*) noexcept;
+	inline initTclFn initTclOg = nullptr;
+	void __fastcall initTclHook(char* thisPtr, void* Unknown) noexcept;
 };
