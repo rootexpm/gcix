@@ -17,6 +17,12 @@ void client_hooks::Setup(uintptr_t globalAddress) noexcept
 		reinterpret_cast<void**>(&setGameSettingsOg)
 	);
 
+	MH_CreateHook(
+		reinterpret_cast<void*>(lglobalAddress + 0x5a5e40),
+		getBaseServerHook,
+		reinterpret_cast<void**>(&getBaseServerOg)
+	);
+
 	MH_EnableHook(MH_ALL_HOOKS);
 
 	console::Print("Client hooks initialized");
@@ -32,5 +38,12 @@ int __stdcall client_hooks::setGameSettingsHook(int a1) noexcept
 	void* address = reinterpret_cast<void*>(lglobalAddress + 0x813c1c); // address of MinRankedMatchPlayers @VZP
 	mem::UpdateMemoryAddress(address, &MinRankedMatchPlayers, sizeof(MinRankedMatchPlayers));
 	
+	return result;
+}
+
+char* __fastcall client_hooks::getBaseServerHook(void* thisPtr, void* Unknown) noexcept
+{
+	char* result = getBaseServerOg(thisPtr);
+	console::Print("getSettingHook: %s", result);
 	return result;
 }
