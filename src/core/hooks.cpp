@@ -179,30 +179,9 @@ int __fastcall hooks::startSessionHook(void* thisPtr, void* Unknown) noexcept
 
 void __fastcall hooks::initTclHook(char* thisPtr, void* Unknown) noexcept
 {
-	// Calculate baseUrl pointer
-	char* baseUrl = thisPtr + 12;
-
-	// Define the new URL
+	char* baseUrl = thisPtr + 12; // this holds the original base URL 0x480298
 	const char* newBaseUrl = "http://127.0.0.1:8080/CLS";
-
-	// Check if the buffer is large enough
-	size_t newBaseUrlLength = std::strlen(newBaseUrl);
-
-	if (newBaseUrlLength < 256)
-	{
-		// Copy the new URL into the baseUrl
-		std::strcpy(baseUrl, newBaseUrl);
-	}
-	else
-	{
-		// Handle the case where the buffer is too small, if necessary
-		console::Print("Buffer too small to set new URL");
-		return;
-	}
-
-	// Print the modified baseUrl
+	strcpy_s(baseUrl, strlen(newBaseUrl) + 1, newBaseUrl);
 	console::Print("Modified Base URL: %s", baseUrl);
-
-	// Call the original function
 	initTclOg(thisPtr);
 }
