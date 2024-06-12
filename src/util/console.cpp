@@ -26,45 +26,6 @@ void console::Destroy() noexcept
 	fclose(reinterpret_cast<FILE*>(stderr));
 	FreeConsole();
 }
-
-void console::PrintImportant(const char* format, ...) noexcept
-{
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
-	WORD saved_attributes;
-
-	// Save current attributes
-	GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
-	saved_attributes = consoleInfo.wAttributes;
-
-	// Set text color to green
-	SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);
-
-	va_list args;
-	va_start(args, format);
-
-	printf_s("[gcix] ");
-	vprintf_s(format, args);
-	printf_s("\n");
-
-	va_end(args);
-
-	// Restore original attributes
-	SetConsoleTextAttribute(hConsole, saved_attributes);
-}
-
-void console::Print(const char* format, ...) noexcept
-{
-	va_list args;
-	va_start(args, format);
-
-	printf_s("[gcix] ");
-	vprintf_s(format, args);
-	printf_s("\n");
-
-	va_end(args);
-}
-
 // Function to generate filename
 void generate_filename(char* filename, size_t size) {
 	strncpy(filename, "logging.log", size);
@@ -94,6 +55,65 @@ void custom_log(const char* message) {
 	}
 }
 
+void console::PrintImportant(const char* format, ...) noexcept
+{
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
+	WORD saved_attributes;
+
+	// Save current attributes
+	GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
+	saved_attributes = consoleInfo.wAttributes;
+
+	// Set text color to green
+	SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);
+
+	va_list args;
+	va_start(args, format);
+
+	printf_s("[gcix] ");
+	vprintf_s(format, args);
+	printf_s("\n");
+
+	va_end(args);
+
+	// Restore original attributes
+	SetConsoleTextAttribute(hConsole, saved_attributes);
+}
+
+void console::AgoraPrint(int a1, int a2, int a3, int a4, char* Format, ...) noexcept
+{
+	char Buffer[2564]; // Buffer to store the formatted message
+	va_list va;
+
+	// Initialize va_list with the variable arguments
+	va_start(va, Format);
+
+	// Format the message
+	vsprintf_s(Buffer, sizeof(Buffer), Format, va);
+
+	// Print the message to the console
+	printf("Log: %s\n", Buffer);
+	custom_log(Buffer);
+
+	// Call the original function with the original arguments
+	va_end(va);
+}
+
+void console::Print(const char* format, ...) noexcept
+{
+	va_list args;
+	va_start(args, format);
+
+	printf_s("[gcix] ");
+	vprintf_s(format, args);
+	printf_s("\n");
+
+	va_end(args);
+}
+
+
+
 void console::DebugPrint(const char* format, ...) noexcept
 {
 	va_list args;
@@ -116,7 +136,7 @@ void console::DebugPrint(const char* format, ...) noexcept
 	va_end(args);
 
 	// Log to file
-	custom_log(buffer);
+	//custom_log(buffer);
 
 	va_end(args);
 }
