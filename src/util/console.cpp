@@ -105,7 +105,9 @@ void console::DebugPrint(const char* format, ...) noexcept
 	char prefixed_format[2046];
 	snprintf(prefixed_format, sizeof(prefixed_format), "[gcix] %s", format);
 
-	// Print to console
+	if (prefixed_format[strlen(prefixed_format) - 1] != '\n')
+		strcat_s(prefixed_format, "\n");
+
 	vprintf(prefixed_format, args);
 
 	// Reset the va_list to log the message
