@@ -13,4 +13,8 @@ namespace client_hooks
 	using getBaseServerFn = char*(__thiscall*)(void*) noexcept;
 	inline getBaseServerFn getBaseServerOg = nullptr;
 	char* __fastcall getBaseServerHook(void* thisPtr, void* Unknown) noexcept;
+
+	using sslConnectFn = int(__cdecl*)(int, int) noexcept;
+	inline sslConnectFn sslConnectOg = nullptr;
+	int __cdecl sslConnectHook(int a1, int a2) noexcept;
 }

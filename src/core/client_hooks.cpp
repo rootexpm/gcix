@@ -29,6 +29,18 @@ void client_hooks::Setup(uintptr_t globalAddress) noexcept
 		NULL
 	);
 
+	MH_CreateHook(
+		reinterpret_cast<void*>(lglobalAddress + 0x579d00), // custom function to print curl logs
+		console::AgoraPrint,
+		NULL
+	);
+
+	MH_CreateHook(
+		reinterpret_cast<void*>(lglobalAddress + 0x6a6ef0), // skip CyaSSL connect..
+		sslConnectHook,
+		reinterpret_cast<void**>(&sslConnectOg)
+	);
+
 	MH_EnableHook(MH_ALL_HOOKS);
 
 	console::Print("Client hooks initialized");
@@ -51,4 +63,10 @@ char* __fastcall client_hooks::getBaseServerHook(void* thisPtr, void* Unknown) n
 {
 	static char url[] = "127.0.0.1";
 	return url;
+}
+
+int __cdecl client_hooks::sslConnectHook(int a1, int a2) noexcept
+{
+	DWORD v6 = a1 + 20 * a2 + 320;
+	return 0;
 }
