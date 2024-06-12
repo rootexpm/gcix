@@ -92,6 +92,9 @@ void console::AgoraPrint(int a1, int a2, int a3, int a4, char* Format, ...) noex
 	// Format the message
 	vsprintf_s(Buffer, sizeof(Buffer), Format, va);
 
+	if (Buffer[strlen(Buffer) - 1] != '\n')
+		strcat_s(Buffer, "\n");
+
 	// Print the message to the console
 	printf("Log: %s\n", Buffer);
 	custom_log(Buffer);
