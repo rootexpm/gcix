@@ -42,11 +42,19 @@ namespace hooks
 	inline dlcEnableFn dlcEnableOg = nullptr;
 	int __fastcall dlcEnableHook(void* thisPtr, void* Unknown) noexcept;
 
-	using verifyWbid = int(*)(int) noexcept;
-	inline verifyWbid verifyWbidOg = nullptr;
-	int __fastcall verifyWbidHook(int a1) noexcept;
+	using startSessionFn = int(__thiscall*)(void*) noexcept;
+	inline startSessionFn startSessionOg = nullptr;
+	int __fastcall startSessionHook(void* thisPtr, void* Unknown) noexcept;
+
+	using initTclFn = void(__thiscall*)(char*) noexcept;
+	inline initTclFn initTclOg = nullptr;
+	void __fastcall initTclHook(char* thisPtr, void* Unknown) noexcept;
 
 	using patchWbid = int(*)(int a1, int ArgList, char* Source) noexcept;
 	inline patchWbid patchWbidOg = nullptr;
 	int __cdecl patchWbidHook(int a1, int ArgList, char* Source) noexcept;
+
+	using verifyWbid = int(*)(int) noexcept;
+	inline verifyWbid verifyWbidOg = nullptr;
+	int __fastcall verifyWbidHook(int a1) noexcept;
 };

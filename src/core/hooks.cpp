@@ -38,11 +38,11 @@ void hooks::Setup() noexcept
 	//	reinterpret_cast<void**>(&getFileNameOg) // client_file_mgr->GetFilename
 	//);
 
-	MH_CreateHook(
-		reinterpret_cast<void*>(0x40C465),
-		startShellHook,
-		reinterpret_cast<void**>(&startShellOg) // StartShell
-	);
+	//MH_CreateHook(
+	//	reinterpret_cast<void*>(0x40C465),
+	//	startShellHook,
+	//	reinterpret_cast<void**>(&startShellOg) // StartShell
+	//);
 
 	//MH_CreateHook(
 	//	reinterpret_cast<void*>(0x418833),
@@ -56,11 +56,11 @@ void hooks::Setup() noexcept
 	//	reinterpret_cast<void**>(&readAssetOg) // ReadAsset
 	//);
 
-	MH_CreateHook(
-		reinterpret_cast<void*>(0x498007),
-		getMaxPartySizeHook,
-		reinterpret_cast<void**>(&getMaxPartySizeOg) // GetMaxPartySize
-	);
+	//MH_CreateHook(
+	//	reinterpret_cast<void*>(0x498007),
+	//	getMaxPartySizeHook,
+	//	reinterpret_cast<void**>(&getMaxPartySizeOg) // GetMaxPartySize
+	//);
 
 	MH_CreateHook(
 		reinterpret_cast<void*>(0x4760FF),
@@ -79,11 +79,25 @@ void hooks::Setup() noexcept
 	//	dlcEnableHook,
 	//	reinterpret_cast<void**>(&dlcEnableOg) // dlcEnable
 	//);
+	
+	//MH_CreateHook(
+	//	reinterpret_cast<void*>(0x48EA47),
+	//	getGameSettingHook,
+	//	reinterpret_cast<void**>(&getGameSettingOg) // getaGameSetting
+	//);
+
+	CreateThread(NULL, 0, waitForDllAndHook, NULL, 0, NULL);
 
 	MH_CreateHook(
-		reinterpret_cast<void*>(0x5A6E00),
-		verifyWbidHook,
-		reinterpret_cast<void**>(&verifyWbidOg) // wbid login green light 10136ef0
+		reinterpret_cast<void*>(0x48EA47),
+		startSessionHook,
+		reinterpret_cast<void**>(&startSessionOg)
+	);
+
+	MH_CreateHook(
+		reinterpret_cast<void*>(0x480298),
+		initTclHook,
+		reinterpret_cast<void**>(&initTclOg)
 	);
 
 	MH_CreateHook(
@@ -91,7 +105,6 @@ void hooks::Setup() noexcept
 		patchWbidHook,
 		reinterpret_cast<void**>(&patchWbidOg) // wbid login green2 light 10136ef0
 	);
-	CreateThread(NULL, 0, waitForDllAndHook, NULL, 0, NULL);
 
 	MH_EnableHook(MH_ALL_HOOKS);
 
@@ -142,7 +155,7 @@ int __fastcall hooks::readAssetHook(void* thisPtr, void* Unknown, const char* a2
 	console::Print("ReadAsset: %s", a2);
 	return result;
 }
-
+void* gamePointer = nullptr;
 unsigned int hooks::getMaxPartySizeHook() noexcept
 {
 	unsigned int result = getMaxPartySizeOg();
@@ -162,16 +175,19 @@ int __fastcall hooks::dlcEnableHook(void* thisPtr, void* Unknown) noexcept
 	return result;
 }
 
-int __cdecl hooks::patchWbidHook(int a1, int ArgList, char* Source) noexcept
+int __fastcall hooks::startSessionHook(void* thisPtr, void* Unknown) noexcept
 {
-	int result = patchWbidOg(a1, ArgList, Source);
-	console::PrintImportant("WBID[1] Auth Called! Bypassing... %d", a1);
+	gamePointer = thisPtr;
+	console::Print("Starting session... %p", gamePointer);
+	int result = startSessionOg(thisPtr);
 	return result;
 }
 
-int __fastcall hooks::verifyWbidHook(int a1) noexcept
+void __fastcall hooks::initTclHook(char* thisPtr, void* Unknown) noexcept
 {
-	int result = verifyWbidOg(a1);
-	console::PrintImportant("WBID[2] Auth Called! Bypassing... %d", a1);
-	return result;
+	char* baseUrl = thisPtr + 12; // this holds the original base URL 0x480298
+	const char* newBaseUrl = "http://127.0.0.1:8080/CLS";
+	strcpy_s(baseUrl, strlen(newBaseUrl) + 1, newBaseUrl);
+	console::Print("Modified Base URL: %s", baseUrl);
+	initTclOg(thisPtr);
 }
