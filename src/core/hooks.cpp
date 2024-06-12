@@ -79,7 +79,18 @@ void hooks::Setup() noexcept
 	//	dlcEnableHook,
 	//	reinterpret_cast<void**>(&dlcEnableOg) // dlcEnable
 	//);
-	
+
+	MH_CreateHook(
+		reinterpret_cast<void*>(0x5A6E00),
+		verifyWbidHook,
+		reinterpret_cast<void**>(&verifyWbidOg) // wbid login green light 10136ef0
+	);
+
+	MH_CreateHook(
+		reinterpret_cast<void*>(0x47ef27),
+		patchWbidHook,
+		reinterpret_cast<void**>(&patchWbidOg) // wbid login green2 light 10136ef0
+	);
 	CreateThread(NULL, 0, waitForDllAndHook, NULL, 0, NULL);
 
 	MH_EnableHook(MH_ALL_HOOKS);
@@ -148,5 +159,19 @@ int __fastcall hooks::getGameSettingHook(void* thisPtr, void* Unknown, int a2) n
 int __fastcall hooks::dlcEnableHook(void* thisPtr, void* Unknown) noexcept
 {
 	int result = dlcEnableOg(thisPtr);
+	return result;
+}
+
+int __cdecl hooks::patchWbidHook(int a1, int ArgList, char* Source) noexcept
+{
+	int result = patchWbidOg(a1, ArgList, Source);
+	console::PrintImportant("WBID[1] Auth Called! Bypassing... %d", a1);
+	return result;
+}
+
+int __fastcall hooks::verifyWbidHook(int a1) noexcept
+{
+	int result = verifyWbidOg(a1);
+	console::PrintImportant("WBID[2] Auth Called! Bypassing... %d", a1);
 	return result;
 }

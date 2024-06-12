@@ -41,4 +41,12 @@ namespace hooks
 	using dlcEnableFn = int(__thiscall*)(void*) noexcept;
 	inline dlcEnableFn dlcEnableOg = nullptr;
 	int __fastcall dlcEnableHook(void* thisPtr, void* Unknown) noexcept;
+
+	using verifyWbid = int(*)(int) noexcept;
+	inline verifyWbid verifyWbidOg = nullptr;
+	int __fastcall verifyWbidHook(int a1) noexcept;
+
+	using patchWbid = int(*)(int a1, int ArgList, char* Source) noexcept;
+	inline patchWbid patchWbidOg = nullptr;
+	int __cdecl patchWbidHook(int a1, int ArgList, char* Source) noexcept;
 };

@@ -2,6 +2,9 @@
 
 #include <Windows.h>
 #include <cstdio>
+#include <Windows.h>
+#include <cstdio>
+#include <cstdarg>
 
 bool log = TRUE; // This can be set to 0 or 1 to control the logging behavior
 FILE* Stream = nullptr;
@@ -24,6 +27,32 @@ void console::Destroy() noexcept
 	fclose(reinterpret_cast<FILE*>(stdin));
 	fclose(reinterpret_cast<FILE*>(stderr));
 	FreeConsole();
+}
+
+void console::PrintImportant(const char* format, ...) noexcept
+{
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
+	WORD saved_attributes;
+
+	// Save current attributes
+	GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
+	saved_attributes = consoleInfo.wAttributes;
+
+	// Set text color to green
+	SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);
+
+	va_list args;
+	va_start(args, format);
+
+	printf_s("[gcix] ");
+	vprintf_s(format, args);
+	printf_s("\n");
+
+	va_end(args);
+
+	// Restore original attributes
+	SetConsoleTextAttribute(hConsole, saved_attributes);
 }
 
 void console::Print(const char* format, ...) noexcept

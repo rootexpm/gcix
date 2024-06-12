@@ -24,11 +24,11 @@ void client_hooks::Setup(uintptr_t globalAddress) noexcept
 
 int __stdcall client_hooks::setGameSettingsHook(int a1) noexcept
 {
-	console::Print("Setting min players to 0");
+	console::Print("Setting min players to 2");
 
 	int result = setGameSettingsOg(a1);
 
-	int MinRankedMatchPlayers = 0; 
+	int MinRankedMatchPlayers = 2; 
 	void* address = reinterpret_cast<void*>(lglobalAddress + 0x813c1c); // address of MinRankedMatchPlayers @VZP
 	mem::UpdateMemoryAddress(address, &MinRankedMatchPlayers, sizeof(MinRankedMatchPlayers));
 	

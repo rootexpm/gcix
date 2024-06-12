@@ -6,4 +6,5 @@ namespace console
 	void Destroy() noexcept;
 	void Print(const char* format, ...) noexcept;
 	void DebugPrint(const char* format, ...) noexcept;
+	void PrintImportant(const char* format, ...) noexcept;
 }
