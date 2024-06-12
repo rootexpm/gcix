@@ -49,6 +49,6 @@ int __stdcall client_hooks::setGameSettingsHook(int a1) noexcept
 
 char* __fastcall client_hooks::getBaseServerHook(void* thisPtr, void* Unknown) noexcept
 {
-	static char url[] = "127.0.0.1";
+	static char url[] = "http://127.0.0.1";
 	return url;
 }
