@@ -68,5 +68,6 @@ char* __fastcall client_hooks::getBaseServerHook(void* thisPtr, void* Unknown) n
 int __cdecl client_hooks::sslConnectHook(int a1, int a2) noexcept
 {
 	DWORD v6 = a1 + 20 * a2 + 320;
+	*(DWORD*)(v6 + 16) = 4;
 	return 0;
 }
