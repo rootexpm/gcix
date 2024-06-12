@@ -2,8 +2,6 @@
 
 #include <Windows.h>
 #include <cstdio>
-#include <Windows.h>
-#include <cstdio>
 #include <cstdarg>
 
 bool log = TRUE; // This can be set to 0 or 1 to control the logging behavior
