@@ -106,8 +106,6 @@ void hooks::Setup() noexcept
 		reinterpret_cast<void**>(&patchWbidOg) // wbid login green2 light 10136ef0
 	);
 
-
-
 	MH_EnableHook(MH_ALL_HOOKS);
 
 	console::Print("Hooks applied...");

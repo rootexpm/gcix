@@ -33,4 +33,24 @@ namespace client_hooks
 	using sslWriteFn = int(__cdecl*)(void*, int, int, unsigned int, void*) noexcept;
 	inline sslWriteFn sslWriteOg = nullptr;
 	int __cdecl sslWriteHook(void* a1, int a2, int a3, unsigned int a4, void* a5) noexcept;
+	
+	using sslConFn = int(__cdecl*)(int) noexcept;
+	inline sslConFn sslConOg = nullptr;
+	int __cdecl sslConHook(int a1) noexcept;
+
+	using sslNewFn = void* (__cdecl*)(int) noexcept;
+	inline sslNewFn sslNewOg = nullptr;
+	void* __cdecl sslNewHook(int a1) noexcept;
+
+	using InitSSL_CtxFn = int(__cdecl*)(int, int) noexcept;
+	inline InitSSL_CtxFn InitSSL_CtxOg = nullptr;
+	int __cdecl InitSSL_CtxHook(int a1, int a2) noexcept;
+
+	using setVerifyFn = int(__cdecl*)(int, int, int) noexcept;
+	inline setVerifyFn setVerifyOg = nullptr;
+	int __cdecl setVerifyHook(int a1, int a2, int a3) noexcept;
+
+	using connectSslFn = int(__cdecl*)(int*, int) noexcept;
+	inline connectSslFn connectSslOg = nullptr;
+	int __cdecl connectSslHook(int* a1, int a2) noexcept;
 }

@@ -39,39 +39,22 @@ void client_hooks::Setup(uintptr_t globalAddress) noexcept
 	);
 
 	MH_CreateHook(
-		reinterpret_cast<void*>(lglobalAddress + 0x6a6ef0), // skip CyaSSL connect..
-		sslConnectHook,
-		reinterpret_cast<void**>(&sslConnectOg)
+		reinterpret_cast<void*>(lglobalAddress + 0x64a1c0),
+		setVerifyHook,
+		reinterpret_cast<void**>(&setVerifyOg)
 	);
 
-	//MH_CreateHook(
-	//	reinterpret_cast<void*>(lglobalAddress + 0x649b60),
-	//	getCertificateHook,
-	//	reinterpret_cast<void**>(&getCertificateOg)
-	//);
-
-	//MH_CreateHook(
-	//	reinterpret_cast<void*>(lglobalAddress + 0x64ac20),
-	//	sub_7B50AC20Hook,
-	//	reinterpret_cast<void**>(&sub_7B50AC20Og)
-	//);
-
-	//MH_CreateHook(
-	//	reinterpret_cast<void*>(lglobalAddress + 0x6a71f0),
-	//	sslReadHook,
-	//	reinterpret_cast<void**>(&sslReadOg)
-	//);
-
-	//MH_CreateHook(
-	//	reinterpret_cast<void*>(lglobalAddress + 0x6a7100),
-	//	sslWriteHook,
-	//	reinterpret_cast<void**>(&sslWriteOg)
-	//);
+	MH_CreateHook(
+		reinterpret_cast<void*>(lglobalAddress + 0x6a6c80),
+		connectSslHook,
+		reinterpret_cast<void**>(&connectSslOg)
+	);
 
 	// nopping calls below to prevent console being flooded by useless logs
 	mem::Nop((BYTE*)lglobalAddress + 0x64996f, 5);
 	mem::Nop((BYTE*)lglobalAddress + 0x648226, 5);
 	mem::Nop((BYTE*)lglobalAddress + 0x649606, 5);
+	//mem::UpdateMemoryAddress((void*)(lglobalAddress + 0x59ddfa), "\x68\xb3\x15\00\x00", 5); // change port to 5555
 
 	MH_EnableHook(MH_ALL_HOOKS);
 
@@ -97,52 +80,79 @@ char* __fastcall client_hooks::getBaseServerHook(void* thisPtr, void* Unknown) n
 	return url;
 }
 
-// SSL offset 649b6d
-int __cdecl client_hooks::sslConnectHook(int a1, int a2) noexcept
+enum { /* ssl Constants */
+	SSL_ERROR_NONE = 0,   /* for most functions */
+	SSL_FAILURE = 0,   /* for some functions */
+	SSL_SUCCESS = 1,
+
+	SSL_BAD_CERTTYPE = -8,
+	SSL_BAD_STAT = -7,
+	SSL_BAD_PATH = -6,
+	SSL_BAD_FILETYPE = -5,
+	SSL_BAD_FILE = -4,
+	SSL_NOT_IMPLEMENTED = -3,
+	SSL_UNKNOWN = -2,
+	SSL_FATAL_ERROR = -1,
+
+	SSL_FILETYPE_ASN1 = 2,
+	SSL_FILETYPE_PEM = 1,
+	SSL_FILETYPE_DEFAULT = 2, /* ASN1 */
+	SSL_FILETYPE_RAW = 3, /* NTRU raw key blob */
+
+	SSL_VERIFY_NONE = 0,
+	SSL_VERIFY_PEER = 1,
+	SSL_VERIFY_FAIL_IF_NO_PEER_CERT = 2,
+	SSL_VERIFY_CLIENT_ONCE = 4,
+
+	SSL_SESS_CACHE_OFF = 30,
+	SSL_SESS_CACHE_CLIENT = 31,
+	SSL_SESS_CACHE_SERVER = 32,
+	SSL_SESS_CACHE_BOTH = 33,
+	SSL_SESS_CACHE_NO_AUTO_CLEAR = 34,
+	SSL_SESS_CACHE_NO_INTERNAL_LOOKUP = 35,
+
+	SSL_ERROR_WANT_READ = 2,
+	SSL_ERROR_WANT_WRITE = 3,
+	SSL_ERROR_WANT_CONNECT = 7,
+	SSL_ERROR_WANT_ACCEPT = 8,
+	SSL_ERROR_SYSCALL = 5,
+	SSL_ERROR_WANT_X509_LOOKUP = 83,
+	SSL_ERROR_ZERO_RETURN = 6,
+	SSL_ERROR_SSL = 85,
+
+	SSL_SENT_SHUTDOWN = 1,
+	SSL_RECEIVED_SHUTDOWN = 2,
+	SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER = 4,
+	SSL_OP_NO_SSLv2 = 8,
+
+	SSL_R_SSL_HANDSHAKE_FAILURE = 101,
+	SSL_R_TLSV1_ALERT_UNKNOWN_CA = 102,
+	SSL_R_SSLV3_ALERT_CERTIFICATE_UNKNOWN = 103,
+	SSL_R_SSLV3_ALERT_BAD_CERTIFICATE = 104,
+
+	PEM_BUFSIZE = 1024
+};
+
+int __cdecl client_hooks::InitSSL_CtxHook(int ctx, int a2) noexcept
 {
-	// idek
-	DWORD v6 = a1 + 20 * a2 + 320;
-	*(DWORD*)(v6 + 12) = 10;
-	*(DWORD*)(v6 + 16) = 4;
-	int result = sslConnectOg(a1, a2);
+	int result = InitSSL_CtxOg(ctx, a2);
+	*(BYTE*)(ctx + 236) = 0; //verifyPeer
+	*(BYTE*)(ctx + 237) = 1; // verifyNone
+
 	return result;
 }
 
-int __cdecl client_hooks::getCertificateHook(int a1) noexcept
+int __cdecl client_hooks::setVerifyHook(int a1, int a2, int a3) noexcept
 {
-	if (a1 == 0)
-		return 0;
-
-	int v5 = 1;
-	const char* Str = cert;
-
-	while (v5 == 1 && Str)
-	{
-		size_t v1 = std::strlen(Str);
-		v5 = sub_7B50AC20Og(a1, Str, v1, 1);
-		if (v5 == 1)
-		{
-			const char* v2 = std::strstr(Str, "-----END CERTIFICATE-----");
-			Str = std::strstr(v2, "-----BEGIN CERTIFICATE-----");
-		}
-	}
-	return v5;
+	console::Print("SET VERIFY %d", a2);
+	return setVerifyOg(a1, SSL_VERIFY_NONE, a3);
 }
 
-int __cdecl client_hooks::sub_7B50AC20Hook(int a1, const char* a2, size_t a3, int a4) noexcept
+int __cdecl client_hooks::connectSslHook(int* a1, int a2) noexcept
 {
-	return 0;
-}
+	int v6 = *a1;
+	*(DWORD*)(v6 + 544) = 0; // verifyPeer
 
-int __cdecl client_hooks::sslReadHook(void* a1, int a2, void* a3, unsigned int a4, void* a5) noexcept
-{
-
-	a5 = 0;
-	return a4;
-}
-
-int __cdecl client_hooks::sslWriteHook(void* a1, int a2, int a3, unsigned int a4, void* a5) noexcept
-{
-	a5 = 0;
-	return a4;
+	int result = connectSslOg(a1, a2);
+	return result;
 }
