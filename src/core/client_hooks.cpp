@@ -51,6 +51,7 @@ void client_hooks::Setup(uintptr_t globalAddress) noexcept
 	mem::Nop((BYTE*)lglobalAddress + 0x64996f, 5);
 	mem::Nop((BYTE*)lglobalAddress + 0x648226, 5);
 	mem::Nop((BYTE*)lglobalAddress + 0x649606, 5);
+	mem::Nop((BYTE*)lglobalAddress + 0x645b13, 5);
 	//mem::UpdateMemoryAddress((void*)(lglobalAddress + 0x59ddfa), "\x68\xb3\x15\00\x00", 5); // change port to 5555
 
 	MH_EnableHook(MH_ALL_HOOKS);
