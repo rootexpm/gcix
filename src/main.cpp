@@ -12,7 +12,9 @@ BOOL APIENTRY DllMain(HMODULE instance, DWORD reason, LPVOID reserved)
 	{
 		DisableThreadLibraryCalls(instance);
 		
+#ifdef DEBUG
 		console::Setup();
+#endif
 		patches::Setup();
 		hooks::Setup();
 		
