@@ -2,6 +2,8 @@
 
 namespace console
 {
+	bool console_initialized = false;
+
 	void Setup() noexcept;
 	void Destroy() noexcept;
 	void Print(const char* format, ...) noexcept;

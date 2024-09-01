@@ -17,6 +17,8 @@ void console::Setup() noexcept
 	char title[256];
 	sprintf_s(title, sizeof(title), "gcix - %s %s", __DATE__, __TIME__);
 	SetConsoleTitleA(title);
+
+	console::console_initialized = true;
 }
 
 void console::Destroy() noexcept
@@ -33,6 +35,9 @@ void generate_filename(char* filename, size_t size) {
 
 // Function to log messages to a file
 void custom_log(const char* message) {
+	if (!console::console_initialized)
+		return;
+
 	char FileName[260];
 
 	if (log) {
@@ -57,6 +62,9 @@ void custom_log(const char* message) {
 
 void console::PrintImportant(const char* format, ...) noexcept
 {
+	if (!console::console_initialized)
+		return;
+
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
 	WORD saved_attributes;
@@ -83,6 +91,9 @@ void console::PrintImportant(const char* format, ...) noexcept
 
 void console::AgoraPrint(int a1, int a2, int a3, int a4, char* Format, ...) noexcept
 {
+	if (!console::console_initialized)
+		return;
+
 	char Buffer[2564]; // Buffer to store the formatted message
 	va_list va;
 
@@ -105,6 +116,9 @@ void console::AgoraPrint(int a1, int a2, int a3, int a4, char* Format, ...) noex
 
 void console::Print(const char* format, ...) noexcept
 {
+	if (!console::console_initialized)
+		return;
+
 	va_list args;
 	va_start(args, format);
 
@@ -119,6 +133,9 @@ void console::Print(const char* format, ...) noexcept
 
 void console::DebugPrint(const char* format, ...) noexcept
 {
+	if (!console::console_initialized)
+		return;
+
 	va_list args;
 	va_start(args, format);
 
@@ -139,7 +156,7 @@ void console::DebugPrint(const char* format, ...) noexcept
 	va_end(args);
 
 	// Log to file
-	//custom_log(buffer);
+	custom_log(buffer);
 
 	va_end(args);
 }
