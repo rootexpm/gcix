@@ -1,5 +1,5 @@
 workspace "gcix"
-    configurations { "Release" }
+    configurations { "Release", "Debug" }
     architecture "x86"
     location "."
 
@@ -7,9 +7,9 @@ project "gcix"
     kind "SharedLib"
     language "C++"
     cppdialect "C++20"
-    targetdir "build/"
+    targetdir "build/%{cfg.buildcfg}/"
     targetname "d3d9"
-    objdir "build/intermediates/"
+    objdir "build/intermediates/%{cfg.buildcfg}/"
 
     files { "src/**.h", "src/**.cpp" }
     files { "ext/minhook/**.h", "ext/minhook/**.c" }
@@ -21,6 +21,12 @@ project "gcix"
         optimize "On"
         characterset "MBCS"
         runtime "Release"
+
+    filter "configurations:Debug"
+        defines { "DEBUG" }
+        symbols "On"
+        characterset "MBCS"
+        runtime "Debug"
 
 newoption {
     trigger = "postbuildcopy",
