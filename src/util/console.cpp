@@ -6,6 +6,7 @@
 
 bool log = TRUE; // This can be set to 0 or 1 to control the logging behavior
 FILE* Stream = nullptr;
+bool console::console_initialized = false;
 
 void console::Setup() noexcept
 {
