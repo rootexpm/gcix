@@ -3,9 +3,10 @@
 #include <Windows.h>
 #include <cstdio>
 #include <cstdarg>
+#include <fstream>
 
-bool log = TRUE; // This can be set to 0 or 1 to control the logging behavior
-FILE* Stream = nullptr;
+bool debug_log = true; // This can be set to 0 or 1 to control the logging behavior
+std::ofstream logStream;
 bool console::console_initialized = false;
 
 void console::Setup() noexcept
@@ -36,29 +37,16 @@ void generate_filename(char* filename, size_t size) {
 
 // Function to log messages to a file
 void custom_log(const char* message) {
-	if (!console::console_initialized)
-		return;
+	if (!console::console_initialized || !debug_log) return;
 
-	char FileName[260];
-
-	if (log) {
-		if (!Stream) {
-			generate_filename(FileName, sizeof(FileName));
-			Stream = fopen(FileName, "a");
-			if (!Stream) {
-				perror("Failed to open log file");
-				return;
-			}
-		}
-		fputs(message, Stream);
-		fflush(Stream);
-	}
-	else {
-		if (Stream) {
-			fclose(Stream);
-			Stream = nullptr;
+	if (!logStream.is_open()) {
+		logStream.open("logging.log", std::ios::app);
+		if (!logStream) {
+			console::Print("Failed to open log file");
+			return;
 		}
 	}
+	logStream << message << std::flush;
 }
 
 void console::AgoraPrint(int a1, int a2, int a3, int a4, char* Format, ...) noexcept
@@ -66,23 +54,19 @@ void console::AgoraPrint(int a1, int a2, int a3, int a4, char* Format, ...) noex
 	if (!console::console_initialized)
 		return;
 
-	char Buffer[2564]; // Buffer to store the formatted message
+	char Buffer[2564];
 	va_list va;
 
-	// Initialize va_list with the variable arguments
 	va_start(va, Format);
 
-	// Format the message
 	vsprintf_s(Buffer, sizeof(Buffer), Format, va);
 
 	if (Buffer[strlen(Buffer) - 1] != '\n')
 		strcat_s(Buffer, "\n");
 
-	// Print the message to the console
 	printf("Log: %s\n", Buffer);
 	custom_log(Buffer);
 
-	// Call the original function with the original arguments
 	va_end(va);
 }
 
