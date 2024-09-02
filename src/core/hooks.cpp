@@ -100,12 +100,6 @@ void hooks::Setup() noexcept
 		reinterpret_cast<void**>(&initTclOg)
 	);
 
-	MH_CreateHook(
-		reinterpret_cast<void*>(0x47ef27),
-		patchWbidHook,
-		reinterpret_cast<void**>(&patchWbidOg) // wbid login green2 light 10136ef0
-	);
-
 	MH_EnableHook(MH_ALL_HOOKS);
 
 	console::Print("Hooks applied...");
@@ -190,18 +184,4 @@ void __fastcall hooks::initTclHook(char* thisPtr, void* Unknown) noexcept
 	strcpy_s(baseUrl, strlen(newBaseUrl) + 1, newBaseUrl);
 	console::Print("Modified Base URL: %s", baseUrl);
 	initTclOg(thisPtr);
-}
-
-int __cdecl hooks::patchWbidHook(int a1, int ArgList, char* Source) noexcept
-{
-	int result = patchWbidOg(a1, ArgList, Source);
-	console::PrintImportant("WBID[1] Auth Called! Bypassing... %d", a1);
-	return result;
-}
-
-int __fastcall hooks::verifyWbidHook(int a1) noexcept
-{
-	int result = verifyWbidOg(a1);
-	console::PrintImportant("WBID[2] Auth Called! Bypassing... %d", a1);
-	return result;
 }

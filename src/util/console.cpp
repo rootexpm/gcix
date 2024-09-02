@@ -61,35 +61,6 @@ void custom_log(const char* message) {
 	}
 }
 
-void console::PrintImportant(const char* format, ...) noexcept
-{
-	if (!console::console_initialized)
-		return;
-
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
-	WORD saved_attributes;
-
-	// Save current attributes
-	GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
-	saved_attributes = consoleInfo.wAttributes;
-
-	// Set text color to green
-	SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);
-
-	va_list args;
-	va_start(args, format);
-
-	printf_s("[gcix] ");
-	vprintf_s(format, args);
-	printf_s("\n");
-
-	va_end(args);
-
-	// Restore original attributes
-	SetConsoleTextAttribute(hConsole, saved_attributes);
-}
-
 void console::AgoraPrint(int a1, int a2, int a3, int a4, char* Format, ...) noexcept
 {
 	if (!console::console_initialized)
