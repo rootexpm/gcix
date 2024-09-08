@@ -5,12 +5,12 @@
 #include "core/hooks.h"
 #include "util/console.h"
 #include "patches/patches.h"
+#include "steam/steam.h"
 
 BOOL APIENTRY DllMain(HMODULE instance, DWORD reason, LPVOID reserved)
 {
 	if (reason == DLL_PROCESS_ATTACH)
 	{
-		DisableThreadLibraryCalls(instance);
 		
 #ifdef DEBUG
 		console::Setup();
